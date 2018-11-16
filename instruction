@@ -1,0 +1,5 @@
+
+luanch application from terminal
+
+C:\Users\Ankit>E:\Android\sdk\platform-tools\adb shell am start -n com.app.spyap
+p/.HomeActivity
